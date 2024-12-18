@@ -27,7 +27,7 @@ extras_require = {
     "selenium": ["selenium>4", "webdriver_manager", "beautifulsoup4"],
     "search-google": ["google-api-python-client==2.94.0"],
     "search-ddg": ["duckduckgo-search~=4.1.1"],
-    "ocr": ["paddlepaddle==2.4.2", "paddleocr~=2.7.3", "tabulate==0.9.0"],
+    # "ocr": ["paddlepaddle==2.4.2", "paddleocr~=2.7.3", "tabulate==0.9.0"],
     "rag": [
         "llama-index-core==0.10.15",
         "llama-index-embeddings-azure-openai==0.1.6",
@@ -43,6 +43,7 @@ extras_require = {
         "llama-index-postprocessor-cohere-rerank==0.1.4",
         "llama-index-postprocessor-colbert-rerank==0.1.1",
         "llama-index-postprocessor-flag-embedding-reranker==0.1.2",
+        # "llama-index-vector-stores-milvus==0.1.23",
         "docx2txt==0.8",
     ],
 }
@@ -60,10 +61,8 @@ extras_require["test"] = [
     "azure-cognitiveservices-speech~=1.31.0",
     "aioboto3~=12.4.0",
     "gradio==3.0.0",
-    "grpcio-status==1.48.2",
-    "grpcio-tools==1.48.2",
     "google-api-core==2.17.1",
-    "protobuf==3.19.6",
+    "protobuf~=4.25.5",
     "pylint==3.0.3",
     "pybrowsers",
 ]
@@ -109,7 +108,7 @@ setup(
     license="MIT",
     keywords="metagpt multi-agent multi-role programming gpt llm metaprogramming",
     packages=find_packages(exclude=["contrib", "docs", "examples", "tests*"]),
-    python_requires=">=3.9",
+    python_requires=">=3.9, <3.12",
     install_requires=requirements,
     extras_require=extras_require,
     cmdclass={

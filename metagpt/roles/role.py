@@ -247,7 +247,7 @@ class Role(SerializationMixin, ContextMixin, BaseModel):
         return self
 
     def _init_action(self, action: Action):
-        if not action.private_config:
+        if not action.private_llm:
             action.set_llm(self.llm, override=True)
         else:
             action.set_llm(self.llm, override=False)
@@ -422,8 +422,8 @@ class Role(SerializationMixin, ContextMixin, BaseModel):
         """Prepare new messages for processing from the message buffer and other sources."""
         # Read unprocessed messages from the msg buffer.
         news = []
-        if self.recovered:
-            news = [self.latest_observed_msg] if self.latest_observed_msg else []
+        if self.recovered and self.latest_observed_msg:
+            news = self.rc.memory.find_news(observed=[self.latest_observed_msg], k=10)
         if not news:
             news = self.rc.msg_buffer.pop_all()
         # Store the read messages in your own memory to prevent duplicate processing.
@@ -478,10 +478,10 @@ class Role(SerializationMixin, ContextMixin, BaseModel):
 
     async def _plan_and_act(self) -> Message:
         """first plan, then execute an action sequence, i.e. _think (of a plan) -> _act -> _act -> ... Use llm to come up with the plan dynamically."""
-
-        # create initial plan and update it until confirmation
-        goal = self.rc.memory.get()[-1].content  # retreive latest user requirement
-        await self.planner.update_plan(goal=goal)
+        if not self.planner.plan.goal:
+            # create initial plan and update it until confirmation
+            goal = self.rc.memory.get()[-1].content  # retreive latest user requirement
+            await self.planner.update_plan(goal=goal)
 
         # take on tasks until all finished
         while self.planner.current_task:
